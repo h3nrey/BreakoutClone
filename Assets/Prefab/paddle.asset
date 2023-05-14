@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: paddle
   m_EditorClassIdentifier: 
   speed: 1000
+  tries: 2

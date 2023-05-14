@@ -6,4 +6,5 @@ using UnityEngine;
 public class Player : ScriptableObject
 {
     public float speed;
+    public int tries;
 }
