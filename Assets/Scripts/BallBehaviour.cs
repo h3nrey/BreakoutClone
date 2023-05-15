@@ -11,9 +11,12 @@ public class BallBehaviour : MonoBehaviour
     [SerializeField] float launchForce;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] float reflectX, reflexctY;
+    [SerializeField] float maxSpeed;
 
     [SerializeField] int endLayer;
     private Vector2 startPos;
+
+    [SerializeField] TrailRenderer trail;
     private void Start() {
         startPos = transform.position;
         Coroutines.DoAfter(InitialLaunch, launchDelay, this);
@@ -26,10 +29,15 @@ public class BallBehaviour : MonoBehaviour
         
     }
 
+    private void FixedUpdate() {
+        if(rb.velocity.magnitude > maxSpeed) {
+            rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxSpeed);
+        }
+    }
     private void OnCollisionEnter2D(Collision2D otherCol) {
         GameObject other = otherCol.gameObject;
         if (other.tag != "ball") {
-            rb.AddForce(rb.velocity * reflectX);
+            //rb.AddForce(rb.velocity * reflectX);
         }
 
         if(other.layer == endLayer) {
@@ -44,6 +52,7 @@ public class BallBehaviour : MonoBehaviour
         rb.AddForce(launchDir);
     }
     private void RestartBall() {
+        trail.Clear();
         rb.velocity = Vector2.zero;
         transform.position = startPos;
         Coroutines.DoAfter(InitialLaunch, launchDelay, this);

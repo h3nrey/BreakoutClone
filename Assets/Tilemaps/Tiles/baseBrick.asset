@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
   m_Name: baseBrick
   m_EditorClassIdentifier: 
-  m_DefaultSprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_DefaultSprite: {fileID: 21300000, guid: c621324a1598a25418575a41f181483c, type: 3}
   m_DefaultGameObject: {fileID: 1364085511103361617, guid: 9c0e4d7ef50f5094aae3a83d0b2be860, type: 3}
   m_DefaultColliderType: 1
   m_TilingRules: []
