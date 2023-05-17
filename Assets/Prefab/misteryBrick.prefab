@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7408265199434074043}
   - component: {fileID: -5109007693670782124}
   m_Layer: 0
-  m_Name: Brick
+  m_Name: misteryBrick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 12
-  m_Sprite: {fileID: 21300000, guid: c621324a1598a25418575a41f181483c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 75e2cffa9d8cdf646a1b1e268462007d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -101,7 +101,7 @@ MonoBehaviour:
   life: 1
   currentLife: 0
   tiles: {fileID: 0}
-  isMistery: 0
+  isMistery: 1
   powerUps:
   - {fileID: 6900902204886049226, guid: 8a8c7f6a4bf47d14da7b8cd0a2a38d68, type: 3}
 --- !u!61 &-5109007693670782124

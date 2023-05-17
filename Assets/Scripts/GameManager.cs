@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager game;
-
+    [SerializeField] private AudioSource audioSystem;
     [SerializeField] private GameObject ball;
 
     private void Awake() {
@@ -19,5 +19,9 @@ public class GameManager : MonoBehaviour
         print("won");
         Destroy(ball);
         Time.timeScale = 0;
+    }
+
+    public void playReflectSound() {
+        audioSystem.Play();
     }
 }

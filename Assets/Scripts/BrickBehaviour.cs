@@ -12,6 +12,11 @@ public class BrickBehaviour : MonoBehaviour
     Vector3Int cellPos;
     Transform parent;
 
+    [SerializeField]
+    private bool isMistery;
+    [SerializeField]
+    GameObject[] powerUps;
+
 
     private void Start() {
         parent = transform.parent;
@@ -34,12 +39,26 @@ public class BrickBehaviour : MonoBehaviour
         currentLife -= 1;
 
         if(currentLife < 1) {
+            tiles.SetTile(cellPos, null);
             if(parent.childCount <= 1) {
                 GameManager.game.LevelWon();
+                return;
             }
-            tiles.SetTile(cellPos, null);
+            if(isMistery)
+                GeneratePowerup();
+
             Destroy(this.gameObject);
 
         }
+    }
+
+    private void GeneratePowerup() {
+        GameObject powerup = ChoosePowerUp();
+        Instantiate(powerup, transform.position, Quaternion.identity);
+    }
+
+    private GameObject ChoosePowerUp() {
+        int randomIndex = Random.Range(0, powerUps.Length);
+        return powerUps[randomIndex];
     }
 }

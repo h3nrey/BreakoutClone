@@ -23,9 +23,20 @@ public class PlayerController : MonoBehaviour
     [Header("move")]
     [SerializeField] float limitX;
     private Vector2 pos;
+    private Vector2 startPos;
+
+    [Header("powerups")]
+    [SerializeField] Sprite longSprite;
+    [SerializeField] Sprite baseSprite;
+    [SerializeField] float powerupDuration;
+    [SerializeField] float powerupTime;
+    [SerializeField] bool hasPowerup;
 
     [Header("Components")]
     [SerializeField] Rigidbody2D rb;
+    [SerializeField] SpriteRenderer sprRenderer;
+    [SerializeField] Collider2D col;
+    [SerializeField] GameObject longCol;
     #endregion
 
     private void Awake() {
@@ -35,6 +46,13 @@ public class PlayerController : MonoBehaviour
     private void Start() {
         onTeleport.AddListener(Teleport);
         currentTries = data.tries;
+        startPos = transform.position;
+    }
+
+    private void Update() {
+        if(Time.time > powerupTime && hasPowerup) {
+            clearPowerup();
+        }
     }
     private void FixedUpdate() {
         Move();
@@ -68,6 +86,31 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
+    private void OnTriggerEnter2D(Collider2D other) {
+        GameObject otherObj = other.gameObject;
+        
+        if(otherObj.tag == "powerup_long") {
+            Destroy(otherObj);
+            sprRenderer.sprite = longSprite;
+
+            hasPowerup = true;
+            longCol.SetActive(true);
+            col.enabled = false;
+            powerupTime = powerupDuration + Time.time;
+        }
+
+    }
+
+    private void clearPowerup() {
+        hasPowerup = false;
+        sprRenderer.sprite = baseSprite;
+        longCol.SetActive(false);
+        col.enabled = true;
+    }
+    public void ResetPlayerPos() {
+        transform.position = startPos;
+        rb.velocity = Vector2.zero;
+    }
     public void RemoveTrie() {
         currentTries--;
         
