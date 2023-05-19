@@ -17,9 +17,6 @@ public class PlayerController : MonoBehaviour
     [ReadOnly] public int currentTries;
     public UnityEvent gameOver;
 
-    [Header("Events")]
-    public UnityEvent onTeleport;
-
     [Header("move")]
     [SerializeField] float limitX;
     private Vector2 pos;
@@ -35,6 +32,7 @@ public class PlayerController : MonoBehaviour
     [Header("Components")]
     [SerializeField] Rigidbody2D rb;
     [SerializeField] SpriteRenderer sprRenderer;
+    [SerializeField] Animator anim;
     [SerializeField] Collider2D col;
     [SerializeField] GameObject longCol;
     #endregion
@@ -44,7 +42,6 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Start() {
-        onTeleport.AddListener(Teleport);
         currentTries = data.tries;
         startPos = transform.position;
     }
@@ -63,11 +60,6 @@ public class PlayerController : MonoBehaviour
     public void GetInput(InputAction.CallbackContext context) {
         input = context.ReadValue<Vector2>();
     }
-    public void OnTeleport(InputAction.CallbackContext context) {
-        if(context.started) {
-            onTeleport?.Invoke();
-        }
-    }
     #endregion
 
     #region Movement
@@ -79,10 +71,6 @@ public class PlayerController : MonoBehaviour
         } else if(rb.position.x < -limitX) {
             rb.position = new Vector2(-limitX, rb.position.y);
         }
-    }
-
-    private void Teleport() {
-        rb.position = new Vector2(pos.x, -pos.y);
     }
     #endregion
 
@@ -97,6 +85,14 @@ public class PlayerController : MonoBehaviour
             longCol.SetActive(true);
             col.enabled = false;
             powerupTime = powerupDuration + Time.time;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other) {
+        GameObject otherObj = other.gameObject;
+
+        if (otherObj.tag == "ball") {
+            anim.SetTrigger("shake");
         }
 
     }

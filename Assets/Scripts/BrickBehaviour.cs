@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Utils;
 
 public class BrickBehaviour : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class BrickBehaviour : MonoBehaviour
     private bool isMistery;
     [SerializeField]
     GameObject[] powerUps;
+    [SerializeField] GameObject particleEmitter;
+    [SerializeField] Color particleColor;
+    [SerializeField] Animator anim;
 
 
     private void Start() {
@@ -24,10 +28,7 @@ public class BrickBehaviour : MonoBehaviour
         cellPos = tiles.WorldToCell(transform.position);
         tile = tiles.GetTile(cellPos);
         currentLife = life;
-    }
-
-    private void Update() {
-        print("childs: " + parent.childCount);
+        anim = GetComponent<Animator>();
     }
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.tag == "ball") {
@@ -37,6 +38,7 @@ public class BrickBehaviour : MonoBehaviour
 
     private void TakeDamage() {
         currentLife -= 1;
+        anim.SetTrigger("touched");
 
         if(currentLife < 1) {
             tiles.SetTile(cellPos, null);
@@ -47,7 +49,15 @@ public class BrickBehaviour : MonoBehaviour
             if(isMistery)
                 GeneratePowerup();
 
+            GameObject emitter = Instantiate(particleEmitter, transform.position, Quaternion.identity);
+            ParticleSystem emitterParticles = emitter.GetComponent<ParticleSystem>();
+
+            ParticleSystem.MainModule _main = emitterParticles.main;
+            _main.startColor = particleColor;
+
+            emitterParticles.Play();
             Destroy(this.gameObject);
+            GameManager.game.playSound(GameSounds.breakBrick);
 
         }
     }

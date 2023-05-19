@@ -33,7 +33,6 @@ public class BallBehaviour : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        print($"magnitude: {rb.velocity.magnitude} - min speed: {minSpeed}");
         float ballSpeed = rb.velocity.magnitude;
         if(rb.velocity.magnitude > maxSpeed) {
             rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxSpeed);
@@ -47,7 +46,7 @@ public class BallBehaviour : MonoBehaviour
         GameObject other = otherCol.gameObject;
         if (other.tag != "ball") {
             rb.AddForce(rb.velocity * reflectX);
-            GameManager.game.playReflectSound();
+            GameManager.game.playSound(GameSounds.reflect);
         }
 
         if(other.layer == endLayer) {
