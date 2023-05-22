@@ -35,6 +35,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Animator anim;
     [SerializeField] Collider2D col;
     [SerializeField] GameObject longCol;
+
+    [Header("Ball")]
+    [SerializeField] BallBehaviour ball;
     #endregion
 
     private void Awake() {
@@ -47,6 +50,15 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Update() {
+
+        if(input.x > 0) {
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+        } else if(input.x < 1) {
+            transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+        }
+
+        anim.SetFloat("velocity", Mathf.Abs(input.x));
+
         if(Time.time > powerupTime && hasPowerup) {
             clearPowerup();
         }
@@ -59,6 +71,7 @@ public class PlayerController : MonoBehaviour
     #region Input
     public void GetInput(InputAction.CallbackContext context) {
         input = context.ReadValue<Vector2>();
+        anim.SetTrigger("move");
     }
     #endregion
 
@@ -77,15 +90,37 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other) {
         GameObject otherObj = other.gameObject;
         
-        if(otherObj.tag == "powerup_long") {
+        if(otherObj.tag.StartsWith("powerup")) {
             Destroy(otherObj);
-            sprRenderer.sprite = longSprite;
-
-            hasPowerup = true;
-            longCol.SetActive(true);
-            col.enabled = false;
-            powerupTime = powerupDuration + Time.time;
+            HandlePowerup(otherObj.tag);
         }
+    }
+
+    private void HandlePowerup(string tag) {
+        clearPowerup();
+        switch(tag) {
+            case "powerup_short":
+                transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                break;
+
+            case "powerup_long":
+                sprRenderer.sprite = longSprite;
+
+                longCol.SetActive(true);
+                col.enabled = false;
+                break;
+            case "powerup_fast":
+                ball.SpeedUp();
+                break;
+
+            case "powerup_explosiveball":
+                ball.BecameExplosive();
+                break;
+
+        }
+        hasPowerup = true;
+        GameManager.game.playSound(GameSounds.powerup);
+        powerupTime = powerupDuration + Time.time;
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
@@ -98,10 +133,12 @@ public class PlayerController : MonoBehaviour
     }
 
     private void clearPowerup() {
+        transform.localScale = Vector3.one;
         hasPowerup = false;
         sprRenderer.sprite = baseSprite;
         longCol.SetActive(false);
         col.enabled = true;
+        ball.ClearBall();
     }
     public void ResetPlayerPos() {
         transform.position = startPos;

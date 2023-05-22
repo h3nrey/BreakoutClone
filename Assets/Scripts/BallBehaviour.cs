@@ -3,23 +3,46 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Utils;
+using NaughtyAttributes;
 public class BallBehaviour : MonoBehaviour
 {
     //[SerializeField] Vector2 launchDir;
+
+    [Header("Launch")]
     [SerializeField] float launchDelay;
     [SerializeField] float launchY;
     [SerializeField] float launchX;
     [SerializeField] float launchForce;
-    [SerializeField] Rigidbody2D rb;
-    [SerializeField] float reflectX, reflexctY;
-    [SerializeField] float maxSpeed, minSpeed;
+    
+    [Header("Reflect")]
+    [SerializeField] float reflectX, reflexctY, paddleReflect;
 
+    [Header("Speed")]
+    [ReadOnly] 
+    public float maxSpeed, minSpeed;
+    [SerializeField] float baseMinSpeed, baseMaxSpeed, fastSpeed;
+
+    [Header("Trail")]
+    [SerializeField] TrailRenderer trail;
+    [SerializeField] Color baseTrailColor;
+
+    [Header("Explosive")]
+    public bool isExplosive;
+    [SerializeField] Sprite explosiveSprite;
+
+    [Header("Components")]
+    [SerializeField] Rigidbody2D rb;
+    [SerializeField] Animator anim;
+    [SerializeField] SpriteRenderer sprRenderer;
+    [SerializeField] Sprite baseSprite;
     [SerializeField] int endLayer;
     private Vector2 startPos;
     public UnityEvent onBallEnd;
 
-    [SerializeField] TrailRenderer trail;
+
     private void Start() {
+        minSpeed = baseMinSpeed;
+        maxSpeed = baseMaxSpeed;
         startPos = transform.position;
         Coroutines.DoAfter(InitialLaunch, launchDelay, this);
         onBallEnd.AddListener(RestartBall);
@@ -45,7 +68,11 @@ public class BallBehaviour : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D otherCol) {
         GameObject other = otherCol.gameObject;
         if (other.tag != "ball") {
-            rb.AddForce(rb.velocity * reflectX);
+            rb.AddForce(rb.velocity * reflectX, ForceMode2D.Impulse);
+
+            if(other.CompareTag("Player")) {
+                rb.AddForce(Vector2.up * paddleReflect, ForceMode2D.Impulse);
+            }
             GameManager.game.playSound(GameSounds.reflect);
         }
 
@@ -53,6 +80,8 @@ public class BallBehaviour : MonoBehaviour
             //RestartBall();
             onBallEnd?.Invoke();
             PlayerController.instance.RemoveTrie();
+            GameManager.game.playSound(GameSounds.death);
+            GameManager.game.CleanPowerups();
         }
     }
 
@@ -65,6 +94,37 @@ public class BallBehaviour : MonoBehaviour
         trail.Clear();
         rb.velocity = Vector2.zero;
         transform.position = startPos;
+        ClearSpeed();
         Coroutines.DoAfter(InitialLaunch, launchDelay, this);
     }
+    
+    public void SpeedUp() {
+        minSpeed = fastSpeed;
+        maxSpeed = fastSpeed;
+        trail.material.color = Color.white;
+    }
+    private void ClearSpeed() {
+        minSpeed = baseMinSpeed;
+        maxSpeed = baseMaxSpeed;
+        trail.material.color = baseTrailColor;
+    }
+
+    public void BecameExplosive() {
+        isExplosive = true;
+        sprRenderer.sprite = explosiveSprite;
+        anim.SetBool("isExplosive", true);
+    }
+
+
+    private void ClearExplosive() {
+        isExplosive = false;
+        sprRenderer.sprite = baseSprite;
+        anim.SetBool("isExplosive", false);
+    }
+    public void ClearBall() {
+        ClearExplosive();
+        ClearSpeed();
+    }
+
+
 }

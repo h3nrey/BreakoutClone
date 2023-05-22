@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 1145115834396448609}
   - component: {fileID: 7699984064911034078}
   m_Layer: 0
-  m_Name: powerup_long
+  m_Name: powerup
   m_TagString: powerup_long
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,7 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74b0e30280c46f7408e468187e0c0815, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: d86a78fcce67c4e4c98b743868cbae08, type: 2}
+  powerups:
+  - {fileID: 11400000, guid: d3cf39717d0003c40a8654caa1a01c81, type: 2}
+  - {fileID: 11400000, guid: a4f97a0613a9df746895672bc413b3a0, type: 2}
+  - {fileID: 11400000, guid: d86a78fcce67c4e4c98b743868cbae08, type: 2}
+  - {fileID: 11400000, guid: f143743dc8d35cf41bd6dda190916e2f, type: 2}
   sprRenderer: {fileID: 8675754216845636586}
 --- !u!61 &7699984064911034078
 BoxCollider2D:

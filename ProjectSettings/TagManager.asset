@@ -6,6 +6,9 @@ TagManager:
   tags:
   - ball
   - powerup_long
+  - powerup_short
+  - powerup_fast
+  - powerup_explosiveball
   layers:
   - Default
   - TransparentFX
